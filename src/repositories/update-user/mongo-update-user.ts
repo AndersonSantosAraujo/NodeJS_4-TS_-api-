@@ -1,13 +1,13 @@
 import { ObjectId } from "mongodb";
 import {
-  IUpdateUserParams,
+  UpdateUserParams,
   IUpdateUserRepository,
 } from "../../controllers/update-user/protocols";
 import { MongoClient } from "../../database/mongo";
 import { User } from "../../models/user";
 
 export class MongoUpdateUserRepository implements IUpdateUserRepository {
-  async updateUser(id: string, params: IUpdateUserParams): Promise<User> {
+  async updateUser(id: string, params: UpdateUserParams): Promise<User> {
     await MongoClient.db.collection("users").updateOne(
       { _id: new ObjectId(id) },
       {
@@ -19,7 +19,9 @@ export class MongoUpdateUserRepository implements IUpdateUserRepository {
 
     const user = await MongoClient.db
       .collection<Omit<User, "id">>("users")
-      .findOne({ _id: new Object(id) });
+      .findOne({ _id: new ObjectId(id) });
+
+    console.log("TETE ", user);
 
     if (!user) throw new Error("User not updated!");
 
